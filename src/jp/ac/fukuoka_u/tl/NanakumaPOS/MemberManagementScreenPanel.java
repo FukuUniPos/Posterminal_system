@@ -282,6 +282,8 @@ public class MemberManagementScreenPanel extends JPanel implements ActionListene
 			// 入力があった場合，会員検索を行う。
 			if (app.memberFindingRequested(memberID)) {
 				setState(MemberManagementScreenPanelState.Showing);
+			} else {
+				memberID = JOptionPane.showInputDialog(frame, "会員番号を入力してください。");
 			}
 		}
 	}
@@ -292,29 +294,50 @@ public class MemberManagementScreenPanel extends JPanel implements ActionListene
 	private void memberRegistrationRequested() {
 		setState(MemberManagementScreenPanelState.Registering);
 		memberIDField.requestFocusInWindow();
+		//変更点
+		memberIDField.setText(null);
+		memberNameField.setText(null);
+		memberFuriganaField.setText(null);
 	}
 
 	/*
 	 * 会員登録が確定されたときに呼び出さされる。
 	 */
 	private void memberRegistrationConfirmed() {
-		Member member = new Member("", "", "", Gender.Male);
-
+		Gender gender = Gender.Male;
+		Member member = new Member("", "", "", gender);
+		
 		if (JOptionPane.showConfirmDialog(frame,  "会員登録しますか？", "確認", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE) == JOptionPane.YES_OPTION) {
 			if (!validateMemberInfo()) {
 				return;
-			}
+			} else {
 			//@@@ データベースに会員登録を依頼する部分は未実装。
+				if(memberGenderMaleRadioButton.isSelected()) {
+					gender = Gender.Male;
+				} else if (memberGenderFemaleRadioButton.isSelected()) {
+					gender = Gender.Female;
+				}
+				member = new Member(memberIDField.getText(),memberNameField.getText(),memberFuriganaField.getText(),gender);
+				if (app.memberRegistrationRequested(member)) {
+					setState(MemberManagementScreenPanelState.Showing);
+				}
+			}
 		}
 	}
-
 
 	/*
 	 * 会員登録が中止されたときに呼び出される。
 	 */
 	private void memberRegistrationCancelled() {
 		if (JOptionPane.showConfirmDialog(frame, "会員登録を中止しますか？", "確認", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE) == JOptionPane.YES_OPTION) {
-			setState(MemberManagementScreenPanelState.NoOperation);
+
+			if(app.getMemberUnderManagement()==null) {
+				memberUnderManagementChanged();
+				setState(MemberManagementScreenPanelState.NoOperation);
+			} else {
+				memberUnderManagementChanged();
+				setState(MemberManagementScreenPanelState.Showing);
+			}
 		}
 	}
 
@@ -335,6 +358,16 @@ public class MemberManagementScreenPanel extends JPanel implements ActionListene
 				return;
 			}
 			//@@@ データベースに会員の更新を依頼する部分は未実装。
+			Gender gender = Gender.Male;
+			if(memberGenderMaleRadioButton.isSelected()) {
+				gender = Gender.Male;
+			} else if (memberGenderFemaleRadioButton.isSelected()) {
+				gender = Gender.Female;
+			}
+			Member member = new Member(memberIDField.getText(),memberNameField.getText(),memberFuriganaField.getText(),gender);
+			if (app.memberUpdatingRequested(member)) {
+				setState(MemberManagementScreenPanelState.Showing);
+			}
 		}
 	}
 
@@ -345,6 +378,8 @@ public class MemberManagementScreenPanel extends JPanel implements ActionListene
 		if (JOptionPane.showConfirmDialog(frame, "会員情報の更新を中止しますか？", "確認", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE) == JOptionPane.YES_OPTION) {
 			memberUnderManagementChanged();
 			setState(MemberManagementScreenPanelState.Showing);
+
+			memberUnderManagementChanged();
 		}
 	}
 
@@ -355,6 +390,9 @@ public class MemberManagementScreenPanel extends JPanel implements ActionListene
 		String memberName = app.getMemberUnderManagement().getName();
 		if (JOptionPane.showConfirmDialog(frame, "会員「" + memberName + "」を削除しますか？", "確認", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE) == JOptionPane.YES_OPTION) {
 			//@@@ データベースに会員の削除を依頼する部分は未実装。
+			if (app.memberDeletionRequested(app.getMemberUnderManagement().getID())) {
+				setState(MemberManagementScreenPanelState.NoOperation);
+			}
 		}
 	}
 
@@ -379,7 +417,7 @@ public class MemberManagementScreenPanel extends JPanel implements ActionListene
 	}
 
 	/*
-	 * 会員検索画面上のボタンが押されるときに呼び出される。
+	 * 会員管理画面上のボタンが押されるときに呼び出される。
 	 */
 	@Override
 	public void actionPerformed (ActionEvent e) {

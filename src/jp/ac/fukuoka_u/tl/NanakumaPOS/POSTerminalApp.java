@@ -314,6 +314,8 @@ public class POSTerminalApp {
 		// 決済対象商品販売の合計金額を得る。
 		int totalPrice = salesUnderChecking.getTotalPrice();
 
+	
+		
 		// カスタマディスプレイに合計金額を表示する。
 		customerDisplayIF.displayUpperMessage("合計金額", AbstractedCustomerDisplayIF.Alignment.LEFT);
 		customerDisplayIF.displayLowerMessage(Integer.toString(totalPrice), AbstractedCustomerDisplayIF.Alignment.RIGHT);
@@ -386,23 +388,47 @@ public class POSTerminalApp {
 	 * 会員登録が要求されたときに呼び出される。
 	 */
 	public Boolean memberRegistrationRequested(Member member) {
-		//@@@ データベースに会員登録を依頼する部分は未実装。
+		try {
+			memberUnderManagement = member;
+			dbServerIF.registerMember(member);
+			memberManagementScreenPanel.memberUnderManagementChanged();
+		}
+		catch (DBServerIFException ex) {
+			// データベースのアクセスに問題がある場合，問題の発生を店員に知らせ
+			// る。
+			JOptionPane.showMessageDialog(frame, ex.getMessage(), "エラー", JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
 		return true;
 	}
 
 	/*
 	 * 会員更新が要求されたときに呼び出される。
 	 */
-	public Boolean memberUpdatingRequested() {
+	public Boolean memberUpdatingRequested(Member member) {
 		//@@@ データベースに会員更新を依頼する部分は未実装。
+		try {
+			memberUnderManagement = member;
+			dbServerIF.updateMember(member);
+			memberManagementScreenPanel.memberUnderManagementChanged();
+		}
+		catch (DBServerIFException ex) {
+			// データベースのアクセスに問題がある場合，問題の発生を店員に知らせ
+			// る。
+			JOptionPane.showMessageDialog(frame, ex.getMessage(), "エラー", JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
 		return true;
 	}
 
 	/*
 	 * 会員削除が要求されたときに呼び出される。
 	 */
-	public Boolean memberDeletionRequested() {
+	public Boolean memberDeletionRequested(String memberID) {
 		//@@@ データベースに会員削除を依頼する部分は未実装。
+		
+		memberUnderManagement = null;
+		memberManagementScreenPanel.memberUnderManagementChanged();
 		return true;
 	}
 

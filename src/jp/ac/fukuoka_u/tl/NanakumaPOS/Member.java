@@ -28,6 +28,8 @@ public class Member {
 	private String furigana;
 	// 性別
 	private Gender gender;
+	// ポイント
+//	private Integer point;
 
 	/*
 	 * コンストラクタ
@@ -37,6 +39,7 @@ public class Member {
 		name = _name;
 		furigana = _furigana;
 		gender = _gender;
+//		point = _point;
 	}
 
 	/*
@@ -94,4 +97,13 @@ public class Member {
 	public void setGender(Gender _gender) {
 		gender = _gender;
 	}
+/*	
+	public Integer getPoint() {
+		return point;
+	}
+	
+	public void setPoint(Integer _point) {
+		point = _point;
+	}
+*/
 }

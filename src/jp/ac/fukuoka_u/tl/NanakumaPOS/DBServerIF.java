@@ -121,7 +121,25 @@ public class DBServerIF {
 	 * 会員情報 member のとおりにデータベースに登録する。
 	 */
 	public void registerMember(Member member) throws DBServerIFException {
-		//@@@ 未実装
+		String gender = "m";
+		if(member.getGender() == Gender.Male) {
+			gender = "m";
+		} else if(member.getGender() == Gender.Female) {
+			gender = "f";
+		}
+		try {
+			Statement stmt = conn.createStatement();
+			String sql = "insert into membertbl values (" + member.getID() + "," + member.getName() + ",'" + gender + "'," + member.getGender() + ");";
+			stmt.executeUpdate(sql);
+			stmt.close();
+		}
+		catch (SQLException ex) {
+			// エラー文未入力
+			if(ex.getErrorCode() == 1062) {
+				throw new DBServerIFException("この会員情報はすでに登録済みです。");
+			}
+			else throw new DBServerIFException("SQLException: " + ex.getMessage());
+		}
 	}
 
 	/*
@@ -129,7 +147,21 @@ public class DBServerIF {
 	 * 会員情報 member のとおりにデータベースを更新する。
 	 */
 	public void updateMember(Member member) throws DBServerIFException {
-		//@@@ 未実装
+		String gender = "m";
+		if(member.getGender() == Gender.Male) {
+			gender = "m";
+		} else if(member.getGender() == Gender.Female) {
+			gender = "f";
+		}
+		try {
+			Statement stmt = conn.createStatement();
+			String sql = "update membertbl set name='" + member.getName() + "', furigana = '" + member.getFurigana() + "', gender = '" + gender + "' where id = '" + member.getID() + "';";
+			stmt.executeUpdate(sql);
+			stmt.close();
+		}
+		catch (SQLException ex) {
+			throw new DBServerIFException("SQLException: " + ex.getMessage());
+		}
 	}
 
 	/*
@@ -138,5 +170,19 @@ public class DBServerIF {
 	public void deleteMember(String memberID) throws DBServerIFException {
 		//@@@ 未実装
 		//@@@ 削除する会員の購入履歴も削除しなければならないことに注意。
+		try {
+			Statement stmt = conn.createStatement();
+			String sql = "delete from membertbl where id='" + memberID + "';";
+			stmt.executeUpdate(sql);
+			//購入履歴のテーブル名未記入
+			sql = "delete from ______ where id='" + memberID + "';";
+			stmt.executeUpdate(sql);
+
+			stmt.close();
+		}
+		catch (SQLException ex) {
+			throw new DBServerIFException("SQLException: " + ex.getMessage());
+		}
 	}
+
 }

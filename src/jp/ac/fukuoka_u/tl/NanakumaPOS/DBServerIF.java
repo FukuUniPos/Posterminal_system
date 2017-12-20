@@ -99,7 +99,7 @@ public class DBServerIF {
 				} else if (rs.getString("gender").equals("f")) {
 					gender = Gender.Female;
 				}
-				member = new Member(rs.getString("id"), rs.getString("name"), rs.getString("furigana"), gender);
+				member = new Member(rs.getString("id"), rs.getString("name"), rs.getString("furigana"), gender, rs.getInt("point"));
 				count++;
 			}
 			if (count < 1) {
@@ -131,14 +131,19 @@ public class DBServerIF {
 			Statement stmt = conn.createStatement();
 			String sql = "insert into membertbl values (" + member.getID() + "," + member.getName() + ",'" + gender + "'," + member.getGender() + ");";
 			stmt.executeUpdate(sql);
+			sql = "insert into purchaseHistorytbl values (" + member.getID() + ");";
+			stmt.executeUpdate(sql);
 			stmt.close();
 		}
 		catch (SQLException ex) {
-			// エラー文未入力
+			/*
 			if(ex.getErrorCode() == 1062) {
 				throw new DBServerIFException("この会員情報はすでに登録済みです。");
 			}
-			else throw new DBServerIFException("SQLException: " + ex.getMessage());
+			
+			else 
+			*/
+			throw new DBServerIFException("SQLException: " + ex.getMessage());
 		}
 	}
 
@@ -175,7 +180,7 @@ public class DBServerIF {
 			String sql = "delete from membertbl where id='" + memberID + "';";
 			stmt.executeUpdate(sql);
 			//購入履歴のテーブル名未記入
-			sql = "delete from ______ where id='" + memberID + "';";
+			sql = "delete from purchaseHistorytbl where id='" + memberID + "';";
 			stmt.executeUpdate(sql);
 
 			stmt.close();

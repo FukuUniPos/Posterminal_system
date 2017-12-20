@@ -305,7 +305,7 @@ public class MemberManagementScreenPanel extends JPanel implements ActionListene
 	 */
 	private void memberRegistrationConfirmed() {
 		Gender gender = Gender.Male;
-		Member member = new Member("", "", "", gender);
+		Member member = new Member("", "", "", gender,0);
 		
 		if (JOptionPane.showConfirmDialog(frame,  "会員登録しますか？", "確認", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE) == JOptionPane.YES_OPTION) {
 			if (!validateMemberInfo()) {
@@ -317,7 +317,7 @@ public class MemberManagementScreenPanel extends JPanel implements ActionListene
 				} else if (memberGenderFemaleRadioButton.isSelected()) {
 					gender = Gender.Female;
 				}
-				member = new Member(memberIDField.getText(),memberNameField.getText(),memberFuriganaField.getText(),gender);
+				member = new Member(memberIDField.getText(),memberNameField.getText(),memberFuriganaField.getText(),gender,0);
 				if (app.memberRegistrationRequested(member)) {
 					setState(MemberManagementScreenPanelState.Showing);
 				}
@@ -364,7 +364,7 @@ public class MemberManagementScreenPanel extends JPanel implements ActionListene
 			} else if (memberGenderFemaleRadioButton.isSelected()) {
 				gender = Gender.Female;
 			}
-			Member member = new Member(memberIDField.getText(),memberNameField.getText(),memberFuriganaField.getText(),gender);
+			Member member = new Member(memberIDField.getText(),memberNameField.getText(),memberFuriganaField.getText(),gender,app.getMemberUnderManagement().getPoint());
 			if (app.memberUpdatingRequested(member)) {
 				setState(MemberManagementScreenPanelState.Showing);
 			}

@@ -29,17 +29,17 @@ public class Member {
 	// 性別
 	private Gender gender;
 	// ポイント
-//	private Integer point;
+	private Integer point;
 
 	/*
 	 * コンストラクタ
 	 */
-	public Member(String _id, String _name, String _furigana, Gender _gender) {
+	public Member(String _id, String _name, String _furigana, Gender _gender, Integer _point) {
 		id = _id;
 		name = _name;
 		furigana = _furigana;
 		gender = _gender;
-//		point = _point;
+		point = _point;
 	}
 
 	/*
@@ -97,7 +97,7 @@ public class Member {
 	public void setGender(Gender _gender) {
 		gender = _gender;
 	}
-/*	
+
 	public Integer getPoint() {
 		return point;
 	}
@@ -105,5 +105,5 @@ public class Member {
 	public void setPoint(Integer _point) {
 		point = _point;
 	}
-*/
+
 }
